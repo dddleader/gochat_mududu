@@ -26,6 +26,9 @@ func initDB(dbName string) {
 	println("dbpath: %s\n", configFilePath)
 	syncLock.Lock()
 	dbMap[dbName], err = gorm.Open(sqlite.Open(configFilePath), &gorm.Config{})
+	if err != nil {
+		logrus.Error("open db error")
+	}
 	sqlDB, err := dbMap[dbName].DB()
 	sqlDB.SetMaxIdleConns(4)
 	sqlDB.SetMaxOpenConns(20)
