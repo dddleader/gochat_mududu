@@ -1,9 +1,11 @@
 package logic
 
 import (
+	"fmt"
 	"gochat_mududu/config"
 	"runtime"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,12 +21,18 @@ func New() *Logic {
 //接收登录消息，返回AuthToken
 
 func (logic *Logic) Run() {
-	runtime.GOMAXPROCS(config.Conf.Logic.LogicBase.CpuNum)
+	logicConfig := config.Conf.Logic
+
+	runtime.GOMAXPROCS(logicConfig.LogicBase.CpuNum)
+	logic.ServerId = fmt.Sprintf("logic-%s", uuid.New().String())
 	//redis client for publishing msg
 	err := logic.InitPublishRedisClient()
 	if err != nil {
-		logrus.Error("err in InitPublishRedisClient")
+		logrus.Panicf("logic init publishRedisClient fail,err:%s", err.Error())
 	}
 	//rpc server for rpc call
-
+	//初始化RPC服务器
+	if err := logic.InitRpcServer(); err != nil {
+		logrus.Panicf("logic init rpc server fail")
+	}
 }

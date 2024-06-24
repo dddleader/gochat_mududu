@@ -46,3 +46,12 @@ func GetDb(dbName string) (db *gorm.DB) {
 		return nil
 	}
 }
+
+// ???
+// encapsulate method in DbGoChat
+type DbGoChat struct {
+}
+
+func (*DbGoChat) GetDbName() string {
+	return "gochat"
+}
